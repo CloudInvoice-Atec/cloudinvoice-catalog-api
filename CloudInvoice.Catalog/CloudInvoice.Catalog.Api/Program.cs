@@ -1,4 +1,7 @@
 
+using CloudInvoice.Catalog.Application.Interfaces;
+using CloudInvoice.Catalog.Infrastructure.Services;
+
 namespace CloudInvoice.Catalog.Api
 {
     public class Program
@@ -13,6 +16,8 @@ namespace CloudInvoice.Catalog.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
 
             var app = builder.Build();
 

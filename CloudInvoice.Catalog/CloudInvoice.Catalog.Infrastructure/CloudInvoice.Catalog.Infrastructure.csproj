@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CloudInvoice.Catalog.Application\CloudInvoice.Catalog.Application.csproj" />
     <ProjectReference Include="..\CloudInvoice.Catalog.Domain\CloudInvoice.Catalog.Domain.csproj" />
   </ItemGroup>
 
