@@ -1,4 +1,5 @@
 
+using CloudInvoice.Catalog.Api.Middlewares;
 using CloudInvoice.Catalog.Application.Interfaces;
 using CloudInvoice.Catalog.Infrastructure.Services;
 
@@ -20,6 +21,8 @@ namespace CloudInvoice.Catalog.Api
             builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
 
             var app = builder.Build();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
