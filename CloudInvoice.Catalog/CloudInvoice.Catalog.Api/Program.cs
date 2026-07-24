@@ -6,8 +6,11 @@ using CloudInvoice.Catalog.Domain.Interfaces;
 using CloudInvoice.Catalog.Infrastructure.Data;
 using CloudInvoice.Catalog.Infrastructure.Repositories;
 using CloudInvoice.Catalog.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace CloudInvoice.Catalog.Api
 {
@@ -19,7 +22,11 @@ namespace CloudInvoice.Catalog.Api
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+                });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
@@ -85,8 +92,6 @@ namespace CloudInvoice.Catalog.Api
             }
 
             app.UseHttpsRedirection();
-
-            app.UseAuthorization();
 
             app.UseAuthorization();
 

@@ -60,5 +60,13 @@ namespace CloudInvoice.Catalog.Api.Controllers
             var deleted = await _productService.DeleteProductAsync(id);
             return deleted ? NoContent() : NotFound();
         }
+        /// <summary>Inativa/cancela um artigo (soft-delete). Apenas Admin.</summary>
+        [HttpPatch("{id:guid}/deactivate")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Deactivate(Guid id)
+        {
+            var deactivated = await _productService.DeactivateProductAsync(id);
+            return deactivated ? NoContent() : NotFound();
+        }
     }
 }
