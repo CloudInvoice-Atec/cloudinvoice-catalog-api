@@ -21,10 +21,10 @@ namespace CloudInvoice.Catalog.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<Product>> GetAllAsync() =>
-            await _context.Products.ToListAsync();
+    await _context.Products.Include(p => p.Category).ToListAsync();
 
         public async Task<Product?> GetByIdAsync(Guid id) =>
-            await _context.Products.FindAsync(id);
+            await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
 
         public async Task AddAsync(Product product)
         {

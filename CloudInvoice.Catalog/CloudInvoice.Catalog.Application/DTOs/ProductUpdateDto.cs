@@ -23,6 +23,8 @@ namespace CloudInvoice.Catalog.Application.DTOs
         [Range(0, 100, ErrorMessage = "A taxa de IVA tem de estar entre 0 e 100.")]
         decimal TaxRate,
 
-        UnitOfMeasure UnitOfMeasure
+        UnitOfMeasure UnitOfMeasure,
+
+        Guid CategoryId
     );
 }
