@@ -10,6 +10,7 @@ namespace CloudInvoice.Catalog.Application.DTOs
         string Code,
         string Description,
         decimal BasePrice,
-        decimal TaxRate
+        decimal TaxRate,
+        string UnitOfMeasure
     );
 }
