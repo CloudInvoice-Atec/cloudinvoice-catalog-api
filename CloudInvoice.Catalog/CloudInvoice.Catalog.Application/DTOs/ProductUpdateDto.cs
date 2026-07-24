@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace CloudInvoice.Catalog.Application.DTOs
 {
-    public record ProductResponseDto(
-        Guid Id,
+    public record ProductUpdateDto( // record é usado para criar um tipo de dados imutável (so transportam dados entre camadas)
         string Code,
         string Description,
         decimal BasePrice,
         decimal TaxRate,
-        string UnitOfMeasure,
-        bool IsActive
+        string UnitOfMeasure
     );
 }
