@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CloudInvoice.Catalog.Domain.Enums;
 
 namespace CloudInvoice.Catalog.Application.DTOs
 {
@@ -12,7 +13,7 @@ namespace CloudInvoice.Catalog.Application.DTOs
         string Description,
         decimal BasePrice,
         decimal TaxRate,
-        string UnitOfMeasure,
+        UnitOfMeasure UnitOfMeasure,
         bool IsActive
     );
 }

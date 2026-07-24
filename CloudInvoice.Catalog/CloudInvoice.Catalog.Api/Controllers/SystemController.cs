@@ -40,3 +40,4 @@ namespace CloudInvoice.Catalog.Api.Controllers
             }
         }
     }
+}

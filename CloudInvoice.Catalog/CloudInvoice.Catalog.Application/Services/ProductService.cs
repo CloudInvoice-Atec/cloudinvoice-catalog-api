@@ -86,6 +86,15 @@ namespace CloudInvoice.Catalog.Application.Services
                 TaxRate = product.TaxRate
             };
         }
+        public async Task<bool> DeactivateProductAsync(Guid id)
+        {
+            var product = await _repository.GetByIdAsync(id);
+            if (product is null) return false;
+
+            product.IsActive = false;
+            await _repository.UpdateAsync(product);
+            return true;
+        }
         private static ProductResponseDto ToDto(Product p) =>
             new(p.Id, p.Code, p.Description, p.BasePrice, p.TaxRate, p.UnitOfMeasure, p.IsActive);
     }
