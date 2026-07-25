@@ -82,6 +82,16 @@ namespace CloudInvoice.Catalog.Api
 
             builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("DefaultPolicy", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             app.UseMiddleware<ExceptionMiddleware>();
@@ -94,7 +104,7 @@ namespace CloudInvoice.Catalog.Api
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors("DefaultPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -25,5 +25,26 @@ namespace CloudInvoice.Catalog.Infrastructure.Repositories
 
         public async Task<Category?> GetByIdAsync(Guid id) =>
             await _context.Categories.FindAsync(id);
+
+        public async Task AddAsync(Category category)
+        {
+            await _context.Categories.AddAsync(category);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Category category)
+        {
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category is null) return;
+
+            _context.Categories.Remove(category); // Se houver Products associados, a FK (Restrict) rejeita
+            await _context.SaveChangesAsync();
+        }
     }
 }
