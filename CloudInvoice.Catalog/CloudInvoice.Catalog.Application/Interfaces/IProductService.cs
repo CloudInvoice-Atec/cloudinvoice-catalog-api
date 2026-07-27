@@ -4,7 +4,7 @@ namespace CloudInvoice.Catalog.Application.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductResponseDto>> GetAllProductsAsync();
+        Task<PagedResultDto<ProductResponseDto>> GetProductsAsync(ProductQueryParameters parameters);
         Task<ProductResponseDto?> GetProductByIdAsync(Guid id);
         Task<ProductResponseDto> AddProductAsync(ProductCreateDto dto);
         Task<bool> UpdateProductAsync(Guid id, ProductUpdateDto dto);

@@ -21,11 +21,6 @@ namespace CloudInvoice.Catalog.Application.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<IEnumerable<ProductResponseDto>> GetAllProductsAsync()
-        {
-            var products = await _repository.GetAllAsync();
-            return products.Select(ToDto);
-        }
 
         public async Task<ProductResponseDto?> GetProductByIdAsync(Guid id)
         {
@@ -114,6 +109,25 @@ namespace CloudInvoice.Catalog.Application.Services
             product.IsActive = false;
             await _repository.UpdateAsync(product);
             return true;
+        }
+        public async Task<PagedResultDto<ProductResponseDto>> GetProductsAsync(ProductQueryParameters parameters)
+        {
+            var (items, totalCount) = await _repository.GetPagedAsync(
+                parameters.Page,
+                parameters.PageSize,
+                parameters.CategoryId,
+                parameters.Search,
+                parameters.IsActive,
+                parameters.MinPrice,
+                parameters.MaxPrice);
+
+            return new PagedResultDto<ProductResponseDto>
+            {
+                Items = items.Select(ToDto),
+                TotalCount = totalCount,
+                Page = parameters.Page,
+                PageSize = parameters.PageSize
+            };
         }
 
         private static ProductResponseDto ToDto(Product p) =>

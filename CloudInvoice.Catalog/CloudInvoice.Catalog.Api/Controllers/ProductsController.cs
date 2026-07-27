@@ -19,10 +19,10 @@ namespace CloudInvoice.Catalog.Api.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] ProductQueryParameters parameters)
         {
-            var products = await _productService.GetAllProductsAsync();
-            return Ok(products);
+            var result = await _productService.GetProductsAsync(parameters);
+            return Ok(result);
         }
 
         [HttpGet("{id:guid}")]
