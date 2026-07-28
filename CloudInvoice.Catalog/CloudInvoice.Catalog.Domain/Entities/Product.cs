@@ -16,5 +16,7 @@ namespace CloudInvoice.Catalog.Domain.Entities
         public decimal TaxRate { get; set; }
         public UnitOfMeasure UnitOfMeasure { get; set; }
         public bool IsActive { get; set; } = true;
+        public Guid CategoryId { get; set; }
+        public Category? Category { get; set; }
     }
 }

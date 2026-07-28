@@ -20,11 +20,50 @@ namespace CloudInvoice.Catalog.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Product>> GetAllAsync() =>
-            await _context.Products.ToListAsync();
+        public async Task<(IEnumerable<Product> Items, int TotalCount)> GetPagedAsync(
+            int page,
+            int pageSize,
+            Guid? categoryId,
+            string? search,
+            bool? isActive,
+            decimal? minPrice,
+            decimal? maxPrice)
+        {
+            var query = _context.Products.Include(p => p.Category).AsQueryable();
+
+            if (categoryId.HasValue)
+                query = query.Where(p => p.CategoryId == categoryId.Value);
+
+            if (isActive.HasValue)
+                query = query.Where(p => p.IsActive == isActive.Value);
+
+            if (minPrice.HasValue)
+                query = query.Where(p => p.BasePrice >= minPrice.Value);
+
+            if (maxPrice.HasValue)
+                query = query.Where(p => p.BasePrice <= maxPrice.Value);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                query = query.Where(p => EF.Functions.Like(p.Code, $"%{term}%")
+                                       || EF.Functions.Like(p.Description, $"%{term}%"));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderBy(p => p.Code)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
 
         public async Task<Product?> GetByIdAsync(Guid id) =>
-            await _context.Products.FindAsync(id);
+            await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
 
         public async Task AddAsync(Product product)
         {

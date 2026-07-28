@@ -14,6 +14,8 @@ namespace CloudInvoice.Catalog.Application.DTOs
         decimal BasePrice,
         decimal TaxRate,
         UnitOfMeasure UnitOfMeasure,
-        bool IsActive
+        bool IsActive,
+        Guid CategoryId,
+        string CategoryName
     );
 }

@@ -1,5 +1,5 @@
 ﻿using CloudInvoice.Catalog.Application.DTOs;
-using CloudInvoice.Catalog.Application.Services;
+using CloudInvoice.Catalog.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,19 +10,19 @@ namespace CloudInvoice.Catalog.Api.Controllers
     [Authorize]
     public class ProductsController : ControllerBase
     {
-        private readonly ProductService _productService;
+        private readonly IProductService _productService;
 
-        public ProductsController(ProductService productService)
+        public ProductsController(IProductService productService)
         {
             _productService = productService;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] ProductQueryParameters parameters)
         {
-            var products = await _productService.GetAllProductsAsync();
-            return Ok(products);
+            var result = await _productService.GetProductsAsync(parameters);
+            return Ok(result);
         }
 
         [HttpGet("{id:guid}")]
@@ -54,13 +54,22 @@ namespace CloudInvoice.Catalog.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id:guid}/is-available")]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsAvailable(Guid id)
+        {
+            var isAvailable = await _productService.IsAvailableAsync(id);
+            return Ok(isAvailable);
+        }
+
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var deleted = await _productService.DeleteProductAsync(id);
             return deleted ? NoContent() : NotFound();
         }
-        /// <summary>Inativa/cancela um artigo (soft-delete). Apenas Admin.</summary>
+
+        
         [HttpPatch("{id:guid}/deactivate")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Deactivate(Guid id)

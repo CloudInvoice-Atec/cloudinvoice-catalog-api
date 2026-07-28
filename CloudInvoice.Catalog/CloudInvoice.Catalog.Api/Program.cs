@@ -55,7 +55,9 @@ namespace CloudInvoice.Catalog.Api
 
             builder.Services.AddDbContext<CatalogDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
-            builder.Services.AddScoped<ProductService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["Secret"]
@@ -80,6 +82,16 @@ namespace CloudInvoice.Catalog.Api
 
             builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("DefaultPolicy", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             app.UseMiddleware<ExceptionMiddleware>();
@@ -92,7 +104,8 @@ namespace CloudInvoice.Catalog.Api
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors("DefaultPolicy");
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
