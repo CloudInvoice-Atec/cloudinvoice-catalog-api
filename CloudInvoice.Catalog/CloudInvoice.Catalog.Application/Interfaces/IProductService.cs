@@ -11,6 +11,6 @@ namespace CloudInvoice.Catalog.Application.Interfaces
         Task<bool> DeleteProductAsync(Guid id);
         Task<AvailabilityResponseDto> CheckAvailabilityAsync(Guid id);
         Task<bool> IsAvailableAsync(Guid id);
-        Task<bool> DeactivateProductAsync(Guid id);
+        Task<bool> ToggleStatusAsync(Guid id);
     }
 }

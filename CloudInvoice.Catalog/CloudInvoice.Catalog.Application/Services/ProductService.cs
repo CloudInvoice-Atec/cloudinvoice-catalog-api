@@ -101,12 +101,14 @@ namespace CloudInvoice.Catalog.Application.Services
             return product is not null && product.IsActive;
         }
 
-        public async Task<bool> DeactivateProductAsync(Guid id)
+        public async Task<bool> ToggleStatusAsync(Guid id)
         {
             var product = await _repository.GetByIdAsync(id);
             if (product is null) return false;
 
-            product.IsActive = false;
+            // Inverte o estado atual
+            product.IsActive = !product.IsActive;
+
             await _repository.UpdateAsync(product);
             return true;
         }

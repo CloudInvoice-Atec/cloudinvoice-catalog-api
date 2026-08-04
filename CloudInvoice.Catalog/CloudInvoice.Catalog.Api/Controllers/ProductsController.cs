@@ -70,11 +70,11 @@ namespace CloudInvoice.Catalog.Api.Controllers
         }
 
         
-        [HttpPatch("{id:guid}/deactivate")]
+        [HttpPatch("{id:guid}/toggle-status")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Deactivate(Guid id)
+        public async Task<IActionResult> ToggleStatus(Guid id)
         {
-            var deactivated = await _productService.DeactivateProductAsync(id);
+            var deactivated = await _productService.ToggleStatusAsync(id);
             return deactivated ? NoContent() : NotFound();
         }
     }
