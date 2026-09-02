@@ -12,5 +12,7 @@ namespace CloudInvoice.Catalog.Application.Interfaces
         Task<AvailabilityResponseDto> CheckAvailabilityAsync(Guid id);
         Task<bool> IsAvailableAsync(Guid id);
         Task<bool> ToggleStatusAsync(Guid id);
+        Task<IEnumerable<ProductResponseDto>> GetAllProductsUnpagedAsync();
+        Task<IEnumerable<ProductResponseDto>> GetActiveProductsUnpagedAsync();
     }
 }

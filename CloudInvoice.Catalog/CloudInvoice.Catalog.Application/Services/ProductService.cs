@@ -131,6 +131,20 @@ namespace CloudInvoice.Catalog.Application.Services
                 PageSize = parameters.PageSize
             };
         }
+        
+        public async Task<IEnumerable<ProductResponseDto>> GetAllProductsUnpagedAsync()
+        {
+            var products = await _repository.GetAllAsync();
+            return products.Select(ToDto);
+        }
+
+        public async Task<IEnumerable<ProductResponseDto>> GetActiveProductsUnpagedAsync()
+        {
+            var products = await _repository.GetAllAsync(isActive: true);
+            return products.Select(ToDto);
+        }
+        
+        
 
         private static ProductResponseDto ToDto(Product p) =>
             new(p.Id, p.Code, p.Description, p.BasePrice, p.TaxRate, p.UnitOfMeasure, p.IsActive,
