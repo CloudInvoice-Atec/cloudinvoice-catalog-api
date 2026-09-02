@@ -60,6 +60,16 @@ namespace CloudInvoice.Catalog.Infrastructure.Repositories
 
             return (items, totalCount);
         }
+        
+        public async Task<IEnumerable<Product>> GetAllAsync(bool? isActive = null)
+        {
+            var query = _context.Products.Include(p => p.Category).AsQueryable();
+
+            if (isActive.HasValue)
+                query = query.Where(p => p.IsActive == isActive.Value);
+
+            return await query.OrderBy(p => p.Code).ToListAsync();
+        }
 
 
         public async Task<Product?> GetByIdAsync(Guid id) =>

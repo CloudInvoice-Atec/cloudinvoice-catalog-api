@@ -17,6 +17,7 @@ namespace CloudInvoice.Catalog.Domain.Interfaces
             bool? isActive,
             decimal? minPrice,
             decimal? maxPrice);
+        Task<IEnumerable<Product>> GetAllAsync(bool? isActive = null);
 
         Task<Product?> GetByIdAsync(Guid id);
         Task AddAsync(Product product);
