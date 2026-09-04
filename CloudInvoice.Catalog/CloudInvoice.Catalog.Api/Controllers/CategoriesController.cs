@@ -1,4 +1,5 @@
 ﻿using CloudInvoice.Catalog.Application.Interfaces;
+using CloudInvoice.Catalog.Api.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CloudInvoice.Catalog.Application.DTOs;
@@ -37,7 +38,9 @@ namespace CloudInvoice.Catalog.Api.Controllers
         public async Task<IActionResult> Update(Guid id, [FromBody] CategoryUpdateDto dto)
         {
             var updated = await _categoryService.UpdateCategoryAsync(id, dto);
-            return updated ? NoContent() : NotFound();
+            if (!updated)
+                throw new NotFoundException($"Categoria com id {id} não encontrada.");
+            return NoContent();
         }
 
         [HttpDelete("{id:guid}")]
@@ -45,7 +48,9 @@ namespace CloudInvoice.Catalog.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var deleted = await _categoryService.DeleteCategoryAsync(id);
-            return deleted ? NoContent() : NotFound();
+            if (!deleted)
+                throw new NotFoundException($"Categoria com id {id} não encontrada.");
+            return NoContent();
         }
     }
 }

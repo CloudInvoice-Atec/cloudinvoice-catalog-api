@@ -1,5 +1,6 @@
 ﻿using CloudInvoice.Catalog.Application.DTOs;
 using CloudInvoice.Catalog.Application.Interfaces;
+using CloudInvoice.Catalog.Api.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,12 +30,17 @@ namespace CloudInvoice.Catalog.Api.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var product = await _productService.GetProductByIdAsync(id);
-            return product is null ? NotFound() : Ok(product);
+            if (product is null)
+                throw new NotFoundException($"Produto com id {id} não encontrado.");
+            return Ok(product);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto productDto)
         {
+            if (productDto.CategoryId == Guid.Empty)
+                throw new ValidationException("CategoryId é obrigatório e não pode estar vazio.");
+
             var created = await _productService.AddProductAsync(productDto);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -42,8 +48,13 @@ namespace CloudInvoice.Catalog.Api.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] ProductUpdateDto productDto)
         {
+            if (productDto.CategoryId == Guid.Empty)
+                throw new ValidationException("CategoryId é obrigatório e não pode estar vazio.");
+
             var updated = await _productService.UpdateProductAsync(id, productDto);
-            return updated ? NoContent() : NotFound();
+            if (!updated)
+                throw new NotFoundException($"Produto com id {id} não encontrado.");
+            return NoContent();
         }
 
         [HttpGet("{id:guid}/check-availability")]
@@ -66,7 +77,9 @@ namespace CloudInvoice.Catalog.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var deleted = await _productService.DeleteProductAsync(id);
-            return deleted ? NoContent() : NotFound();
+            if (!deleted)
+                throw new NotFoundException($"Produto com id {id} não encontrado.");
+            return NoContent();
         }
 
         
@@ -75,7 +88,9 @@ namespace CloudInvoice.Catalog.Api.Controllers
         public async Task<IActionResult> ToggleStatus(Guid id)
         {
             var deactivated = await _productService.ToggleStatusAsync(id);
-            return deactivated ? NoContent() : NotFound();
+            if (!deactivated)
+                throw new NotFoundException($"Produto com id {id} não encontrado.");
+            return NoContent();
         }
         
         
