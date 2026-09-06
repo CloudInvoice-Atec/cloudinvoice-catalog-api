@@ -91,7 +91,8 @@ namespace CloudInvoice.Catalog.Application.Services
             {
                 IsAvailable = product.IsActive,
                 BasePrice = product.BasePrice,
-                TaxRate = product.TaxRate
+                TaxRate = product.TaxRate,
+                ProductDescription = product.Description
             };
         }
 

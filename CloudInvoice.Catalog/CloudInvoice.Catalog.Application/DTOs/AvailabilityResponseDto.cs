@@ -11,5 +11,6 @@ namespace CloudInvoice.Catalog.Application.DTOs
         public bool IsAvailable { get; set; }
         public decimal BasePrice { get; set; }
         public decimal TaxRate { get; set; }
+        public string ProductDescription { get; set; } = string.Empty;
     }
 }
