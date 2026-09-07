@@ -74,6 +74,7 @@ namespace CloudInvoice.Catalog.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var deleted = await _productService.DeleteProductAsync(id);
