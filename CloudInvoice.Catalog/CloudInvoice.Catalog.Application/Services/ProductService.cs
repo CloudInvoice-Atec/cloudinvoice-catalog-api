@@ -2,6 +2,7 @@
 using CloudInvoice.Catalog.Application.Interfaces;
 using CloudInvoice.Catalog.Domain.Entities;
 using CloudInvoice.Catalog.Domain.Interfaces;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,40 +15,34 @@ namespace CloudInvoice.Catalog.Application.Services
     {
         private readonly IProductRepository _repository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IMapper _mapper;
 
-        public ProductService(IProductRepository repository, ICategoryRepository categoryRepository)
+        public ProductService(IProductRepository repository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             _repository = repository;
             _categoryRepository = categoryRepository;
+            _mapper = mapper;
         }
 
 
         public async Task<ProductResponseDto?> GetProductByIdAsync(Guid id)
         {
             var product = await _repository.GetByIdAsync(id);
-            return product is null ? null : ToDto(product);
+            return product is null ? null : _mapper.Map<ProductResponseDto>(product);
         }
 
         public async Task<ProductResponseDto> AddProductAsync(ProductCreateDto dto)
         {
             var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
 
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                Code = dto.Code,
-                Description = dto.Description,
-                BasePrice = dto.BasePrice,
-                TaxRate = dto.TaxRate,
-                UnitOfMeasure = dto.UnitOfMeasure,
-                IsActive = true,
-                CategoryId = dto.CategoryId
-            };
+            var product = _mapper.Map<Product>(dto);
+            product.Id = Guid.NewGuid();
+            product.IsActive = true;
 
             await _repository.AddAsync(product);
 
             product.Category = category;
-            return ToDto(product);
+            return _mapper.Map<ProductResponseDto>(product);
         }
 
         public async Task<bool> UpdateProductAsync(Guid id, ProductUpdateDto dto)
@@ -57,12 +52,7 @@ namespace CloudInvoice.Catalog.Application.Services
 
             var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
 
-            product.Code = dto.Code;
-            product.Description = dto.Description;
-            product.BasePrice = dto.BasePrice;
-            product.TaxRate = dto.TaxRate;
-            product.UnitOfMeasure = dto.UnitOfMeasure;
-            product.CategoryId = dto.CategoryId;
+            _mapper.Map(dto, product);
             product.Category = category;
 
             await _repository.UpdateAsync(product);
@@ -87,13 +77,7 @@ namespace CloudInvoice.Catalog.Application.Services
                 return new AvailabilityResponseDto { IsAvailable = false, BasePrice = 0, TaxRate = 0 };
             }
 
-            return new AvailabilityResponseDto
-            {
-                IsAvailable = product.IsActive,
-                BasePrice = product.BasePrice,
-                TaxRate = product.TaxRate,
-                ProductDescription = product.Description
-            };
+            return _mapper.Map<AvailabilityResponseDto>(product);
         }
 
         public async Task<bool> IsAvailableAsync(Guid id)
@@ -126,7 +110,7 @@ namespace CloudInvoice.Catalog.Application.Services
 
             return new PagedResultDto<ProductResponseDto>
             {
-                Items = items.Select(ToDto),
+                Items = items.Select(p => _mapper.Map<ProductResponseDto>(p)),
                 TotalCount = totalCount,
                 Page = parameters.Page,
                 PageSize = parameters.PageSize
@@ -136,19 +120,18 @@ namespace CloudInvoice.Catalog.Application.Services
         public async Task<IEnumerable<ProductResponseDto>> GetAllProductsUnpagedAsync()
         {
             var products = await _repository.GetAllAsync();
-            return products.Select(ToDto);
+            return products.Select(p => _mapper.Map<ProductResponseDto>(p));
         }
 
         public async Task<IEnumerable<ProductResponseDto>> GetActiveProductsUnpagedAsync()
         {
             var products = await _repository.GetAllAsync(isActive: true);
-            return products.Select(ToDto);
+            return products.Select(p => _mapper.Map<ProductResponseDto>(p));
         }
         
         
 
-        private static ProductResponseDto ToDto(Product p) =>
-            new(p.Id, p.Code, p.Description, p.BasePrice, p.TaxRate, p.UnitOfMeasure, p.IsActive,
-                p.CategoryId, p.Category?.Name ?? string.Empty);
+
+        // Removido ToDto em favor do AutoMapper
     }
 }

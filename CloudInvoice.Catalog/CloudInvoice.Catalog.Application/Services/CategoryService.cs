@@ -13,16 +13,18 @@ namespace CloudInvoice.Catalog.Application.Services
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _repository;
+        private readonly AutoMapper.IMapper _mapper;
 
-        public CategoryService(ICategoryRepository repository)
+        public CategoryService(ICategoryRepository repository, AutoMapper.IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync()
         {
             var categories = await _repository.GetAllAsync();
-            return categories.Select(c => new CategoryResponseDto(c.Id, c.Name));
+            return categories.Select(c => _mapper.Map<CategoryResponseDto>(c));
         }
         public async Task<CategoryResponseDto> AddCategoryAsync(CategoryCreateDto dto)
         {
@@ -33,7 +35,7 @@ namespace CloudInvoice.Catalog.Application.Services
             };
 
             await _repository.AddAsync(category);
-            return new CategoryResponseDto(category.Id, category.Name);
+            return _mapper.Map<CategoryResponseDto>(category);
         }
 
         public async Task<bool> UpdateCategoryAsync(Guid id, CategoryUpdateDto dto)

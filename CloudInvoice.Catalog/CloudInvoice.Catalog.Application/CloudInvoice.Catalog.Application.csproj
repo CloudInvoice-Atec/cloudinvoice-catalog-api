@@ -10,4 +10,8 @@
     <ProjectReference Include="..\CloudInvoice.Catalog.Domain\CloudInvoice.Catalog.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.1" />
+  </ItemGroup>
+
 </Project>

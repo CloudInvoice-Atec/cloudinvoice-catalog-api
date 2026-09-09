@@ -6,6 +6,8 @@ using CloudInvoice.Catalog.Domain.Interfaces;
 using CloudInvoice.Catalog.Infrastructure.Data;
 using CloudInvoice.Catalog.Infrastructure.Repositories;
 using CloudInvoice.Catalog.Infrastructure.Services;
+using AutoMapper;
+using CloudInvoice.Catalog.Application.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -58,6 +60,13 @@ namespace CloudInvoice.Catalog.Api
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+            // Registrar serviços que dependem de IMapper - adicionados construtores com IMapper
+            builder.Services.AddScoped<ProductService>();
+            builder.Services.AddScoped<CategoryService>();
+
+            // AutoMapper
+            builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>(), typeof(Program));
 
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["Secret"]
