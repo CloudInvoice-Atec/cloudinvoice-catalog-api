@@ -53,15 +53,18 @@ namespace CloudInvoice.Catalog.Infrastructure.Data
 
         public static async Task SeedAsync(CatalogDbContext context)
         {
-            var existingCount = await context.Products.CountAsync();
-            if (existingCount >= 100)
+            // Remove TODOS os produtos existentes (do seed antigo e de testes manuais)
+            // antes de gerar os 100 novos - garante sempre o mesmo conjunto de dados.
+            var existingProducts = await context.Products.ToListAsync();
+            if (existingProducts.Any())
             {
-                return; // já tem volume suficiente, não gera mais
+                context.Products.RemoveRange(existingProducts);
+                await context.SaveChangesAsync();
             }
 
             var random = new Random(123); // seed fixa - resultados sempre iguais entre arranques
             var products = new List<Product>();
-            var codeCounter = 1;
+            var codeCounter = 11;
 
             var perTemplateTarget = (100 / Templates.Length) + 1;
 
@@ -79,7 +82,7 @@ namespace CloudInvoice.Catalog.Infrastructure.Data
                     products.Add(new Product
                     {
                         Id = Guid.NewGuid(),
-                        Code = $"S{codeCounter:D3}",
+                        Code = $"P{codeCounter:D3}",
                         Description = description,
                         BasePrice = price,
                         TaxRate = template.TaxRate,
@@ -92,11 +95,10 @@ namespace CloudInvoice.Catalog.Infrastructure.Data
                 }
             }
 
-            // Garante pelo menos 100 no total (corta o excedente do arredondamento)
-            var needed = 100 - existingCount;
-            if (products.Count > needed)
+            // Garante exatamente 100 (corta o excedente do arredondamento)
+            if (products.Count > 100)
             {
-                products = products.Take(needed).ToList();
+                products = products.Take(100).ToList();
             }
 
             await context.Products.AddRangeAsync(products);
