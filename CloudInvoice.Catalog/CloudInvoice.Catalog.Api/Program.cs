@@ -93,6 +93,12 @@ namespace CloudInvoice.Catalog.Api
             });
 
             var app = builder.Build();
+            
+            using (var scope = app.Services.CreateScope())
+            {
+                var catalogContext = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+                CloudInvoice.Catalog.Infrastructure.Data.ProductSeeder.SeedAsync(catalogContext).GetAwaiter().GetResult();
+            }
 
             app.UseMiddleware<ExceptionMiddleware>();
 
