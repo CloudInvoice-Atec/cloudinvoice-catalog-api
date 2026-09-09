@@ -53,20 +53,20 @@ namespace CloudInvoice.Catalog.Infrastructure.Data
 
         public static async Task SeedAsync(CatalogDbContext context)
         {
-            // Remove TODOS os produtos existentes (do seed antigo e de testes manuais)
-            // antes de gerar os 100 novos - garante sempre o mesmo conjunto de dados.
-            var existingProducts = await context.Products.ToListAsync();
-            if (existingProducts.Any())
+            // Não apaga nada - mantém o P001-P010 originais do seed via migração.
+            // Só acrescenta produtos novos (a partir de P011) até perfazer 100 no total.
+            var existingCount = await context.Products.CountAsync();
+            if (existingCount >= 100)
             {
-                context.Products.RemoveRange(existingProducts);
-                await context.SaveChangesAsync();
+                return; // já tem volume suficiente, não gera mais
             }
 
             var random = new Random(123); // seed fixa - resultados sempre iguais entre arranques
             var products = new List<Product>();
             var codeCounter = 11;
 
-            var perTemplateTarget = (100 / Templates.Length) + 1;
+            var needed = 100 - existingCount;
+            var perTemplateTarget = (needed / Templates.Length) + 1;
 
             foreach (var template in Templates)
             {
@@ -87,7 +87,7 @@ namespace CloudInvoice.Catalog.Infrastructure.Data
                         BasePrice = price,
                         TaxRate = template.TaxRate,
                         UnitOfMeasure = template.Unit,
-                        IsActive = random.Next(0, 10) != 0, // ~10% inativos, para testar filtros de estado
+                        IsActive = random.Next(0, 10) != 0,
                         CategoryId = template.CategoryId
                     });
 
@@ -95,10 +95,9 @@ namespace CloudInvoice.Catalog.Infrastructure.Data
                 }
             }
 
-            // Garante exatamente 100 (corta o excedente do arredondamento)
-            if (products.Count > 100)
+            if (products.Count > needed)
             {
-                products = products.Take(100).ToList();
+                products = products.Take(needed).ToList();
             }
 
             await context.Products.AddRangeAsync(products);
