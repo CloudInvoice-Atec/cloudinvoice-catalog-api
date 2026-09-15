@@ -53,15 +53,13 @@ namespace CloudInvoice.Catalog.Infrastructure.Data
 
         public static async Task SeedAsync(CatalogDbContext context)
         {
-            // Não apaga nada - mantém o P001-P010 originais do seed via migração.
-            // Só acrescenta produtos novos (a partir de P011) até perfazer 100 no total.
             var existingCount = await context.Products.CountAsync();
             if (existingCount >= 100)
             {
-                return; // já tem volume suficiente, não gera mais
+                return;
             }
 
-            var random = new Random(123); // seed fixa - resultados sempre iguais entre arranques
+            var random = new Random(123);
             var products = new List<Product>();
             var codeCounter = 11;
 

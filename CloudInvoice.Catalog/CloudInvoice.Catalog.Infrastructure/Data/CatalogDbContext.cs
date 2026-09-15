@@ -11,7 +11,6 @@ namespace CloudInvoice.Catalog.Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
 
-        // IDs fixos - necessário para o seed (HasData) ser sempre determinístico entre migrations
         private static readonly Guid CategoriaGeralId = new("11111111-1111-1111-1111-111111111111");
         private static readonly Guid CategoriaEletronicaId = new("22222222-2222-2222-2222-222222222222");
         private static readonly Guid CategoriaAlimentacaoId = new("33333333-3333-3333-3333-333333333333");

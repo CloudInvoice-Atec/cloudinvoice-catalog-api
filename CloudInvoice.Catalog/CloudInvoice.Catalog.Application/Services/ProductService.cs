@@ -107,7 +107,6 @@ namespace CloudInvoice.Catalog.Application.Services
             var product = await _repository.GetByIdAsync(id);
             if (product is null) return false;
 
-            // Inverte o estado atual
             product.IsActive = !product.IsActive;
 
             await _repository.UpdateAsync(product);

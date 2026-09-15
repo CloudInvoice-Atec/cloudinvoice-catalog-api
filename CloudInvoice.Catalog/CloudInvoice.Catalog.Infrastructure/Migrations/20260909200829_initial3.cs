@@ -3,14 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+#pragma warning disable CA1814
 
 namespace CloudInvoice.Catalog.Infrastructure.Migrations
 {
-    /// <inheritdoc />
     public partial class initial3 : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -84,7 +82,6 @@ namespace CloudInvoice.Catalog.Infrastructure.Migrations
                 column: "CategoryId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

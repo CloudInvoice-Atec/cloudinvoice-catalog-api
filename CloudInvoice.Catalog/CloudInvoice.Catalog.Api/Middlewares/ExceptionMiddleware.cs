@@ -19,11 +19,11 @@ namespace CloudInvoice.Catalog.Api.Middlewares
         {
             try
             {
-                await _next(context); // Deixa o pedido avançar na pipeline
+                await _next(context);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message); // Regista o erro no servidor
+                _logger.LogError(ex, ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -34,7 +34,6 @@ namespace CloudInvoice.Catalog.Api.Middlewares
 
             var response = new ProblemDetails();
 
-            // Mapear tipos de exceção customizados
             if (exception is ApplicationException appEx)
             {
                 context.Response.StatusCode = appEx.StatusCode;
@@ -42,13 +41,11 @@ namespace CloudInvoice.Catalog.Api.Middlewares
                 response.Title = GetTitleByStatusCode(appEx.StatusCode);
                 response.Detail = appEx.Message;
 
-                // Se for ValidationException, adicionar erros específicos
                 if (exception is ValidationException valEx && valEx.Errors.Any())
                 {
                     response.Extensions["errors"] = valEx.Errors;
                 }
             }
-            // Tratamento de ArgumentException e ArgumentNullException (validação)
             else if (exception is ArgumentException argEx)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -56,7 +53,6 @@ namespace CloudInvoice.Catalog.Api.Middlewares
                 response.Title = "Erro de Validação";
                 response.Detail = argEx.Message;
             }
-            // Tratamento de InvalidOperationException
             else if (exception is InvalidOperationException invOpEx)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -64,7 +60,6 @@ namespace CloudInvoice.Catalog.Api.Middlewares
                 response.Title = "Operação Inválida";
                 response.Detail = invOpEx.Message;
             }
-            // Tratamento de DbUpdateException (Entity Framework)
             else if (exception.GetType().Name == "DbUpdateException")
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
@@ -72,7 +67,6 @@ namespace CloudInvoice.Catalog.Api.Middlewares
                 response.Title = "Erro na Base de Dados";
                 response.Detail = "Ocorreu um erro ao processar a operação na base de dados.";
             }
-            // Tratamento de DbUpdateConcurrencyException (concorrência)
             else if (exception.GetType().Name == "DbUpdateConcurrencyException")
             {
                 context.Response.StatusCode = StatusCodes.Status409Conflict;
@@ -80,13 +74,12 @@ namespace CloudInvoice.Catalog.Api.Middlewares
                 response.Title = "Conflito de Concorrência";
                 response.Detail = "O recurso foi modificado por outro utilizador. Por favor, recarregue e tente novamente.";
             }
-            // Tratamento genérico de outras exceções
             else
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 response.Status = StatusCodes.Status500InternalServerError;
                 response.Title = "Erro Interno do Servidor";
-                response.Detail = exception.Message; // Em produção, considere ocultar detalhes internos
+                response.Detail = exception.Message;
             }
 
             var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions 

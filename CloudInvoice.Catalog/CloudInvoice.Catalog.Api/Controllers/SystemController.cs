@@ -17,8 +17,10 @@ namespace CloudInvoice.Catalog.Api.Controllers
         }
 
         /// <summary>
-        /// Verifica se a API está online e se a Base de Dados está acessível.
+        /// Verifica a saúde da API e da base de dados
         /// </summary>
+       
+     
         [HttpGet("health")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

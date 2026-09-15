@@ -43,7 +43,7 @@ namespace CloudInvoice.Catalog.Infrastructure.Repositories
             var category = await _context.Categories.FindAsync(id);
             if (category is null) return;
 
-            _context.Categories.Remove(category); // Se houver Products associados, a FK (Restrict) rejeita
+            _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
         }
     }
